@@ -5,7 +5,7 @@ const registerUser = (request, h) => {
     firstName, lastName, email, password, loan,
   } = request.payload;
 
-  const sql = `INSERT INTO  users(firstname, lastname, email, password, loan) VALUES (${firstName}, '${lastName}', '${email}', '${password}', ${loan})`;
+  const sql = `INSERT INTO  users(firstname, lastname, email, password, loan) VALUES ('${firstName}', '${lastName}', '${email}', '${password}', ${loan})`;
 
   let response = null;
   let resolvedFlag = true;
@@ -49,4 +49,51 @@ const registerUser = (request, h) => {
   );
 };
 
-module.exports = { registerUser };
+const getUser = (request, h) => {
+  const sql = 'SELECT * FROM users';
+
+  const listUser = [];
+  let data;
+  const resolvedFlag = true;
+  let response;
+
+  const getData = () => new Promise((resolve, reject) => {
+    let error;
+    db.query(sql, (err, result) => {
+      if (err) throw err;
+      result.forEach((user) => {
+        data = {
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+        };
+
+        listUser.push(data);
+      });
+    });
+    setTimeout(() => {
+      if (resolvedFlag) {
+        response = h.response({
+          status: 'Success',
+          message: 'Success get data',
+          data: listUser,
+        });
+        response.code = 201;
+        resolve('Resolve');
+      } else {
+        reject(error);
+      }
+    }, 2000);
+  });
+
+  return (
+    getData()
+      .then(() => response)
+      .catch((error) => {
+        console.log(error);
+        return response;
+      })
+  );
+};
+
+module.exports = { registerUser, getUser };

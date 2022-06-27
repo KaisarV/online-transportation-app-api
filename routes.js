@@ -1,10 +1,15 @@
-const { registerUser } = require('./controller/user-handler');
+const { registerUser, getUser } = require('./controller/user-handler');
 
 const routes = [
   {
     method: 'POST',
     path: '/users',
     handler: registerUser,
+  },
+  {
+    method: 'GET',
+    path: '/users',
+    handler: getUser,
   },
 ];
 
