@@ -1,4 +1,4 @@
-const { registerUser, getUser } = require('./controller/user-handler');
+const { registerUser, getUser, deleteUser } = require('./controller/user-handler');
 
 const routes = [
   {
@@ -10,6 +10,11 @@ const routes = [
     method: 'GET',
     path: '/users',
     handler: getUser,
+  },
+  {
+    method: 'DELETE',
+    path: '/user/{userId}',
+    handler: deleteUser,
   },
 ];
 

@@ -18,7 +18,7 @@ const registerUser = (request, h) => {
           status: 'error',
           message: 'failed to register user, please try again later',
         });
-        response.code = 500;
+        response.code = 400;
         error = err;
         resolvedFlag = false;
       } else {
@@ -39,14 +39,12 @@ const registerUser = (request, h) => {
     }, 2000);
   });
 
-  return (
-    insertData()
-      .then(() => response)
-      .catch((error) => {
-        console.log(error);
-        return response;
-      })
-  );
+  return insertData()
+    .then(() => response)
+    .catch((error) => {
+      console.log(error);
+      return response;
+    });
 };
 
 const getUser = (request, h) => {
@@ -86,14 +84,56 @@ const getUser = (request, h) => {
     }, 2000);
   });
 
-  return (
-    getData()
-      .then(() => response)
-      .catch((error) => {
-        console.log(error);
-        return response;
-      })
-  );
+  return getData()
+    .then(() => response)
+    .catch((error) => {
+      console.log(error);
+      return response;
+    });
 };
 
-module.exports = { registerUser, getUser };
+const deleteUser = (request, h) => {
+  const { userId } = request.params;
+  const sql = `DELETE FROM users WHERE id = ${userId}`;
+
+  let resolvedFlag = true;
+  let response;
+
+  const deleteData = () => new Promise((resolve, reject) => {
+    let error;
+    db.query(sql, (err, result) => {
+      if (err) {
+        response = h.response({
+          status: 'Error',
+          message: 'Failed delete user',
+        });
+        response.code = 400;
+        console.log(err);
+        resolvedFlag = false;
+      } else {
+        response = h.response({
+          status: 'Success',
+          message: 'Success delete user',
+        });
+        response.code = 201;
+      }
+    });
+
+    setTimeout(() => {
+      if (resolvedFlag) {
+        resolve(response);
+      } else {
+        reject(response);
+      }
+    }, 2000);
+  });
+
+  return deleteData()
+    .then(() => response)
+    .catch((error) => {
+      console.log(error);
+      return response;
+    });
+};
+
+module.exports = { registerUser, getUser, deleteUser };
